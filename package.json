@@ -1,0 +1,30 @@
+{
+  "name": "armistech-backend-intern202504-handymanservice-groupc",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/armistechofficial/armistech-backend-intern202504-handymanservice-groupC.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/armistechofficial/armistech-backend-intern202504-handymanservice-groupC/issues"
+  },
+  "homepage": "https://github.com/armistechofficial/armistech-backend-intern202504-handymanservice-groupC#readme",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.13.1",
+    "nodemon": "^3.1.9"
+  }
+}
