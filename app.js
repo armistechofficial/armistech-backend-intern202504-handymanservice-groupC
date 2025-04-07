@@ -2,6 +2,7 @@ import express from "express";
 import authRouter from "./routes/authRoutes.js";
 import 'dotenv/config';
 import connectDB from "./databases/mongodb.js";
+import providerRouter from "./routes/providerRoutes.js";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api", providerRouter)
 
 app.listen(port, async () => {
   console.log(`App listening on port ${port}`);

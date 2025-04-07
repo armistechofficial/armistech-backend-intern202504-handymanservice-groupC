@@ -18,7 +18,7 @@ const serviceSchema = new mongoose.Schema({
     }
 })
 
-export const providerSchema = new mongoose.Schema({
+const providerSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, "Service Provider name is required. "]
@@ -43,5 +43,13 @@ export const providerSchema = new mongoose.Schema({
     profileImage: {
         type: String
     },
+    bio: {
+        type: String,
+        required: [true, "Provider's bio is required"]
+    },
     service: [serviceSchema]
 }) 
+
+const Provider = mongoose.model("providers", providerSchema);
+
+export default Provider;
