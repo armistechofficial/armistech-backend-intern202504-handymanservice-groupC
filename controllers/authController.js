@@ -1,6 +1,7 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { OTP } from "../models/otpModel.js";
 
 const secretKey = process.env.JWT_SECRET || "secretKey";
 
@@ -15,6 +16,7 @@ export const registerUser = async (req, res) => {
       address,
       password,
       confirmPassword,
+      otp,
     } = req.body;
 
     if (
@@ -25,7 +27,8 @@ export const registerUser = async (req, res) => {
       !phoneNumber ||
       !address ||
       !password ||
-      !confirmPassword
+      !confirmPassword ||
+      !otp
     ) {
       return res.status(400).json({ message: "All fields are required." });
     }
@@ -40,6 +43,14 @@ export const registerUser = async (req, res) => {
 
     if (isUserExist) {
       return res.status(400).json({ message: "User already exists." });
+    }
+
+    const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
+    if (response.length === 0 || otp !== response[0].otp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid or expired OTP.',
+      });
     }
 
     // Hashing the password
