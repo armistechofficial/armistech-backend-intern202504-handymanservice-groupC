@@ -2,6 +2,8 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { OTP } from "../models/otpModel.js";
+import otpGenerator from 'otp-generator';
+
 
 const secretKey = process.env.JWT_SECRET || "secretKey";
 
@@ -16,7 +18,10 @@ export const registerUser = async (req, res) => {
       address,
       password,
       confirmPassword,
-      otp,
+      user_type,
+      bio,
+      expertise,
+      location,
     } = req.body;
 
     if (
@@ -28,7 +33,7 @@ export const registerUser = async (req, res) => {
       !address ||
       !password ||
       !confirmPassword ||
-      !otp
+      !user_type
     ) {
       return res.status(400).json({ message: "All fields are required." });
     }
@@ -45,13 +50,7 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists." });
     }
 
-    const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
-    if (response.length === 0 || otp !== response[0].otp) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid or expired OTP.',
-      });
-    }
+
 
     // Hashing the password
     const salt = await bcrypt.genSaltSync(10);
@@ -65,20 +64,62 @@ export const registerUser = async (req, res) => {
       phoneNumber,
       address,
       password: hashedPassword,
+      user_type,
+      bio,
+      expertise,
+      location,
+      isVerified: false,
     });
     const { password: _, ...userWithoutPassword } = newUser._doc;
+
+    let otp;
+    let existingOtp;
+
+    // Ensure OTP is unique
+    do {
+      otp = otpGenerator.generate(6, {
+        upperCaseAlphabets: false,
+        lowerCaseAlphabets: false,
+        specialChars: false,
+      });
+      existingOtp = await OTP.findOne({ otp });
+    } while (existingOtp);
+
+    const otpPayload = { email, otp };
+    await OTP.create(otpPayload);
+
+    console.log(`OTP for ${email}: ${otp}`); // For dev
 
     res
       .status(201)
       .json({
         message: "User registered successfully",
         user: userWithoutPassword,
+        otp,
       });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
+
+export const verifyUser = async (req, res) => {
+  const { email, otp } = req.body;
+  const response = await OTP.find({ email }).sort({ createdAt: -1 }).limit(1);
+  if (response.length === 0 || otp !== response[0].otp) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid or expired OTP.",
+    });
+  }
+
+  await User.updateOne({ email }, { isVerified: true });
+  res.status(200).json({
+    success: true,
+    message: "OTP verified successfully.",
+  });
+};
+
 
 export const loginUser = async (req, res) => {
   try {

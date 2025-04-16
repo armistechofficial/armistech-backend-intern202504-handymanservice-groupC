@@ -53,32 +53,37 @@ const userSchema = new mongoose.Schema(
       type: Number,
       enum: [1, 2, 3],
       default: 3,
-      required: [true, "User Type is required."]
+      required: [true, "User Type is required."],
     },
 
+    isVerified: { 
+      type: Boolean, 
+      default: false 
+    },
+    
     bio: {
       type: String,
-      validate :{
-        validator: function(val){
-          return this.user_type !==2 || (val && val.length>0);
+      validate: {
+        validator: function (val) {
+          return this.user_type !== 2 || (val && val.length > 0);
         },
         message: "Provider's bio is required. ",
       },
     },
     expertise: {
       type: String,
-      validate :{
-        validator: function(val){
-          return this.user_type !==2 || (val && val.length>0);
+      validate: {
+        validator: function (val) {
+          return this.user_type !== 2 || (val && val.length > 0);
         },
         message: "Provider's expertise is required. ",
       },
     },
     location: {
       type: String,
-      validate :{
-        validator: function(val){
-          return this.user_type !==2 || (val && val.length>0);
+      validate: {
+        validator: function (val) {
+          return this.user_type !== 2 || (val && val.length > 0);
         },
         message: "Provider's location is required. ",
       },

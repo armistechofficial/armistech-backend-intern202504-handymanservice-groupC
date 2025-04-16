@@ -16,14 +16,14 @@ async function sendVerification(email, otp) {
     const mailResponse = await mailSender(
       email,
       "Verification Email",
-      `<h1>Please confirm your OTP</h1>
-            <p>Here is your OTP code: ${otp}</p>`
+      `<h3>Please confirm your OTP</h3><p>Here is your OTP code: ${otp}</p>`
     );
   } catch (error) {
     console.log("Error while sending email: ", error);
-    throw error;
+    throw new Error("Failed to send verification email.");
   }
 }
+
 
 otpSchema.pre("save", async function (next) {
   console.log("new document saved to the database");
